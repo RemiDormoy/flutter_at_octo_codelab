@@ -40,7 +40,46 @@ Tout d'abord, nous allons identifier sur l'écran quel composant extraire, dans 
 L'idée est de créer un `StatelessWidget` ayant dans sa methode build la chaine de Widgets correspondant à notre bouton.
 Dans notre cas les lignes 206 à 252.
 Ensuite, nous allons définir quels champs sont sensés être parametrables dans ce widget. En suivant si possible l'exemple (et le nommage) des composants du framework. 
-Ici, nous aurons donc un paramètre `onTap` comme dans le composant `Inkwell`, et un paramètre `label`.
+Ici, nous aurons donc un paramètre `onTap` comme dans le composant `Inkwell`, et un paramètre `label`: 
+
+codelab_button.dart
+```dart
+import 'package:flutter/material.dart';
+
+class CodelabButton extends StatelessWidget {
+  final void Function() onTap;
+  final String label;
+
+  const CodelabButton({
+    super.key,
+    required this.onTap,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(60),
+      child: Material(
+        color: Colors.deepPurple,
+        child: InkWell(
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Center(
+              child: Text(
+                label,
+                style: const TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+```
 
 
 
