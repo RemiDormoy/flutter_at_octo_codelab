@@ -193,6 +193,11 @@ final client = MockClient((request) async {
 });
 ```
 
+Petite précision, sur dart, les classes n'ont pas de methodes equals permettant de les comparer par défaut.
+Ainsi, deux instances d'une même classes seront toujours considérées comme différentes si on n'override pas leur methode equals.
+Pour éviter de le faire à la main, nous utilisons habituellement la lib [Equatable](https://pub.dev/packages/equatable)
+Et nous pourrons ainsi simplement faire une comparaison à l'aide d'un expect dans notre test.
+
 Ensuite, c'est du classique Given When Then, comme sur chaque projet.
 
 Pour voir l'implémentation finale, checkout fin_extract_repository
