@@ -78,9 +78,11 @@ class CodelabButton extends StatelessWidget {
     );
   }
 }
-
 ```
 
+Il ne nous reste ensuite plus qu'à l'utiliser dans basic_activity_page.dart, puis à appliquer le même principe à nos autres composants
 
+![Extraction autres](./screenshots/extract_button.png)
 
+Pour vois l'implémentation finale, checkout fin_extraction_widgets
 
