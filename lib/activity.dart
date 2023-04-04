@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-class Activity extends Equatable{
+class Activity extends Equatable {
   final String label;
   final String type;
   final int participants;
@@ -17,10 +17,10 @@ class Activity extends Equatable{
 
   @override
   List<Object?> get props => [
-    label,
-    type,
-    participants,
-    price,
-    accessibility,
-  ];
+        label,
+        type,
+        participants,
+        price,
+        accessibility,
+      ];
 }
