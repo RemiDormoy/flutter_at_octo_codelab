@@ -1,8 +1,7 @@
-import 'dart:convert';
-
+import 'package:codelab_flutter_at_octo/activity.dart';
+import 'package:codelab_flutter_at_octo/activity_repository.dart';
 import 'package:codelab_flutter_at_octo/codelab_button.dart';
 import 'package:codelab_flutter_at_octo/codelab_colors.dart';
-import 'package:codelab_flutter_at_octo/codelabs_text_styles.dart';
 import 'package:codelab_flutter_at_octo/codelabs_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -83,23 +82,13 @@ class _BasicActivityPageState extends State<BasicActivityPage> {
       _loading = true;
       _isFilterExpanded = false;
     });
-    final priceSuffix = '&minprice=${_priceRangeValue.start / 100}&maxprice=${_priceRangeValue.end / 100}';
-    final accessibilitySuffix =
-        '&minaccessibility=${_accessibilityRangeValue.start / 100}&maxaccessibility=${_accessibilityRangeValue.end / 100}';
-    var uri =
-        'https://www.boredapi.com/api/activity?participants=${_participants.toString()}$priceSuffix$accessibilitySuffix';
-    print(uri);
-    final url = Uri.parse(uri);
-    final response = await http.get(url);
+    final activity = await ActivityRepository(http.Client()).getActivity(_priceRangeValue, _accessibilityRangeValue, _participants.toInt());
     setState(() {
-      final jsonDecode2 = jsonDecode(response.body);
       _loading = false;
-      print(jsonDecode2);
-      try {
-        _activity = Activity.fromJson(jsonDecode2);
+      if (activity != null) {
+        _activity = activity;
         _error = false;
-      } catch (e) {
-        print(e.toString());
+      } else {
         _error = true;
       }
     });
@@ -149,32 +138,6 @@ class TypeItem {
   bool isSelected;
 
   TypeItem(this.label, this.isSelected);
-}
-
-class Activity {
-  final String label;
-  final String type;
-  final int participants;
-  final double price;
-  final double accessibility;
-
-  Activity({
-    required this.label,
-    required this.type,
-    required this.participants,
-    required this.price,
-    required this.accessibility,
-  });
-
-  factory Activity.fromJson(dynamic json) {
-    return Activity(
-      label: json['activity'] as String,
-      type: json['type'] as String,
-      participants: (json['participants'] as num).toInt(),
-      price: (json['price'] as num).toDouble() * 100,
-      accessibility: (json['accessibility'] as num).toDouble() * 100,
-    );
-  }
 }
 
 class _Loading extends StatelessWidget {
