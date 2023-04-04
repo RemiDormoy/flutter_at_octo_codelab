@@ -92,14 +92,14 @@ Il est également conseillé dans la mesure du possible de faire correspondre ce
 
 Dans notre cas nous allons donc créer deux fichiers :
  - codelab_colors.dart
-```
+```dart
 class CodelabColors {
   static const primary = Color(0xFF673AB7);
   static const primaryLight = Color(0xFFEDE7F6); 
 }
 ```
  - codelabs_text_styles.dart
-```
+```dart
 class CodelabTextStyles {
   static const text24_bold_black = TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
   static const text20_black = TextStyle(fontSize: 20);
@@ -128,7 +128,7 @@ Pour le reste, la classe est reponsable de l'appel réseau, de la déserializati
 
 Dans notre cas on aura :
 activity_repository.dart
-```
+```dart
 import 'dart:convert';
 
 import 'package:codelab_flutter_at_octo/activity.dart';
