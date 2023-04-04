@@ -1,6 +1,9 @@
 import 'dart:convert';
 
 import 'package:codelab_flutter_at_octo/codelab_button.dart';
+import 'package:codelab_flutter_at_octo/codelab_colors.dart';
+import 'package:codelab_flutter_at_octo/codelabs_text_styles.dart';
+import 'package:codelab_flutter_at_octo/codelabs_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -195,7 +198,7 @@ class _Error extends StatelessWidget {
       child: Center(
           child: Text(
         'No activity found with the specified parameters',
-        style: TextStyle(fontSize: 20),
+        style: CodelabTextStyles.text20_black,
         textAlign: TextAlign.center,
       )),
     );
@@ -208,7 +211,7 @@ class _Empty extends StatelessWidget {
     return const Center(
         child: Text(
       'What will you do today ?',
-      style: TextStyle(fontSize: 20),
+      style: CodelabTextStyles.text20_black,
     ));
   }
 }
@@ -235,7 +238,7 @@ class _Content extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.deepPurple.shade50,
+            color: CodelabColors.primaryLight,
             borderRadius: BorderRadius.circular(20),
           ),
           child: SingleChildScrollView(
@@ -246,7 +249,7 @@ class _Content extends StatelessWidget {
                 Center(
                     child: Text(
                   activity!.label,
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: CodelabTextStyles.text24_bold_black,
                 )),
                 _ContentRow('Type', activity!.type),
                 _ContentRow('Participants', activity!.participants.toString()),
@@ -275,8 +278,8 @@ class _ContentRow extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          Text(value, style: const TextStyle(fontSize: 18))
+          Text(title, style: CodelabTextStyles.text18_bold_black),
+          Text(value, style: CodelabTextStyles.text18_black)
         ],
       ),
     );
@@ -309,7 +312,7 @@ class _Filters extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: Material(
-        color: Colors.deepPurple.shade50,
+        color: CodelabColors.primaryLight,
         child: AnimatedSize(
           alignment: Alignment.topCenter,
           duration: const Duration(milliseconds: 300),
@@ -324,7 +327,7 @@ class _Filters extends StatelessWidget {
                   Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      const Text('Filter your activity', style: TextStyle(fontSize: 18)),
+                      const Text('Filter your activity', style: CodelabTextStyles.text18_black),
                       Expanded(child: Container()),
                       Icon(isFilterExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
                     ],
@@ -333,11 +336,11 @@ class _Filters extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: Container(
-                        decoration: BoxDecoration(color: Colors.deepPurple, borderRadius: BorderRadius.circular(10)),
+                        decoration: BoxDecoration(color: CodelabColors.primary, borderRadius: BorderRadius.circular(10)),
                         height: 2,
                       ),
                     ),
-                    const Text('Accessibility', style: TextStyle(fontSize: 16)),
+                    const Text('Accessibility', style: CodelabTextStyles.text16_black),
                     RangeSlider(
                       values: accessibilityRangeValue,
                       max: 100,
@@ -348,7 +351,7 @@ class _Filters extends StatelessWidget {
                       ),
                       onChanged: onAccessibilityChanged,
                     ),
-                    const Text('Price', style: TextStyle(fontSize: 16)),
+                    const Text('Price', style: CodelabTextStyles.text16_black),
                     const SizedBox(height: 5),
                     RangeSlider(
                       values: priceRangeValue,
@@ -360,7 +363,7 @@ class _Filters extends StatelessWidget {
                       ),
                       onChanged: onPriceChanged,
                     ),
-                    const Text('Number of participants', style: TextStyle(fontSize: 16)),
+                    const Text('Number of participants', style: CodelabTextStyles.text16_black),
                     Slider(
                       value: participants,
                       min: 1,
