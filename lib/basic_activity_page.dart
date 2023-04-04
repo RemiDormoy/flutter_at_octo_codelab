@@ -1,10 +1,12 @@
 import 'package:codelab_flutter_at_octo/activity.dart';
-import 'package:codelab_flutter_at_octo/activity_repository.dart';
+import 'package:codelab_flutter_at_octo/codelab_actions.dart';
 import 'package:codelab_flutter_at_octo/codelab_button.dart';
 import 'package:codelab_flutter_at_octo/codelab_colors.dart';
+import 'package:codelab_flutter_at_octo/codelab_state.dart';
+import 'package:codelab_flutter_at_octo/codelab_view_model.dart';
 import 'package:codelab_flutter_at_octo/codelabs_text_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_redux/flutter_redux.dart';
 
 class BasicActivityPage extends StatefulWidget {
   const BasicActivityPage({super.key});
@@ -15,83 +17,78 @@ class BasicActivityPage extends StatefulWidget {
 
 class _BasicActivityPageState extends State<BasicActivityPage> {
   bool _isFilterExpanded = true;
-  bool _loading = false;
-  bool _error = false;
   RangeValues _accessibilityRangeValue = const RangeValues(0, 100);
   RangeValues _priceRangeValue = const RangeValues(0, 100);
   double _participants = 1;
-  Activity? _activity;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 60, left: 20, right: 20),
-            child: _Filters(
-                onTap: () {
-                  setState(() {
-                    _isFilterExpanded = !_isFilterExpanded;
-                  });
-                },
-                onAccessibilityChanged: (RangeValues values) {
-                  setState(() {
-                    _accessibilityRangeValue = values;
-                  });
-                },
-                onPriceChanged: (RangeValues values) {
-                  setState(() {
-                    _priceRangeValue = values;
-                  });
-                },
-                onParticipantsChanged: (double value) {
-                  setState(() {
-                    _participants = value;
-                  });
-                },
-                isFilterExpanded: _isFilterExpanded,
-                accessibilityRangeValue: _accessibilityRangeValue,
-                priceRangeValue: _priceRangeValue,
-                participants: _participants,
-            ),
-          ),
-          Expanded(
-            child: _Content(
-              loading: _loading,
-              error: _error,
-              activity: _activity,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: CodelabButton(
-              onTap: _getActivity,
-              label: 'Search your activity',
-            ),
-          ),
-        ],
+      body: StoreConnector<CodelabState, CodelabViewModel>(
+        converter: (store) => CodelabViewModel.fromStore(store),
+        distinct: true,
+        builder: (context, vm) {
+          return Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 60, left: 20, right: 20),
+                child: _Filters(
+                  onTap: () {
+                    setState(() {
+                      _isFilterExpanded = !_isFilterExpanded;
+                    });
+                  },
+                  onAccessibilityChanged: (RangeValues values) {
+                    setState(() {
+                      _accessibilityRangeValue = values;
+                    });
+                  },
+                  onPriceChanged: (RangeValues values) {
+                    setState(() {
+                      _priceRangeValue = values;
+                    });
+                  },
+                  onParticipantsChanged: (double value) {
+                    setState(() {
+                      _participants = value;
+                    });
+                  },
+                  isFilterExpanded: _isFilterExpanded,
+                  accessibilityRangeValue: _accessibilityRangeValue,
+                  priceRangeValue: _priceRangeValue,
+                  participants: _participants,
+                ),
+              ),
+              Expanded(
+                child: _Content(
+                  loading: vm.loading,
+                  error: vm.error,
+                  activity: vm.activity,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: CodelabButton(
+                  onTap: () {
+                    setState(() {
+                      _isFilterExpanded = false;
+                    });
+                    StoreProvider.of<CodelabState>(context).dispatch(FindActivityAction(
+                      currentParticipantsFilter: _participants.toInt(),
+                      currentAccessibilityFilter: _accessibilityRangeValue,
+                      currentPriceFilter: _priceRangeValue,
+                    ));
+                  },
+                  label: 'Search your activity',
+                ),
+              ),
+            ],
+          );
+        }
       ),
     );
-  }
-
-  void _getActivity() async {
-    setState(() {
-      _loading = true;
-      _isFilterExpanded = false;
-    });
-    final activity = await ActivityRepository(http.Client()).getActivity(_priceRangeValue, _accessibilityRangeValue, _participants.toInt());
-    setState(() {
-      _loading = false;
-      if (activity != null) {
-        _activity = activity;
-        _error = false;
-      } else {
-        _error = true;
-      }
-    });
   }
 }
 
@@ -299,7 +296,8 @@ class _Filters extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: Container(
-                        decoration: BoxDecoration(color: CodelabColors.primary, borderRadius: BorderRadius.circular(10)),
+                        decoration:
+                            BoxDecoration(color: CodelabColors.primary, borderRadius: BorderRadius.circular(10)),
                         height: 2,
                       ),
                     ),

@@ -41,7 +41,7 @@ main() {
         "https://www.boredapi.com/api/activity?participants=12&minprice=0.003&maxprice=0.006999999999999999&minaccessibility=0.002&maxaccessibility=0.009000000000000001");
     expect(
       result,
-      Activity(
+      const Activity(
         label: "Learn how to iceskate or rollerskate",
         type: "recreational",
         participants: 1,

@@ -7,7 +7,7 @@ class Activity extends Equatable {
   final double price;
   final double accessibility;
 
-  Activity({
+  const Activity({
     required this.label,
     required this.type,
     required this.participants,
