@@ -231,25 +231,16 @@ Ce qui chez nous donnera
 class CodelabState extends Equatable {
   final CodelabStatus status;
   final Activity? activity;
-  final RangeValues currentPriceFilter;
-  final RangeValues currentAccessibilityFilter;
-  final int currentParticipantsFilter;
 
   const CodelabState({
     required this.status,
     required this.activity,
-    required this.currentPriceFilter,
-    required this.currentAccessibilityFilter,
-    required this.currentParticipantsFilter,
   });
 
   @override
   List<Object?> get props => [
     status,
     activity,
-    currentPriceFilter,
-    currentAccessibilityFilter,
-    currentParticipantsFilter,
   ];
 }
 
@@ -334,7 +325,7 @@ codelab_middleware.dart
 ```dart
 import 'package:codelab_flutter_at_octo/activity_repository.dart';
 import 'package:codelab_flutter_at_octo/codelab_actions.dart';
-import 'package:codelab_flutter_at_octo/codelab_state.dart';
+import 'package:codelab_flutter_at_octo/codelab_view_model.dart';
 import 'package:redux/redux.dart';
 
 class CodelabMiddleware extends MiddlewareClass<CodelabState> {
@@ -433,7 +424,7 @@ le paramètre builder correspond à l'écran que nous voulons retourner en fonct
 Avec notre `CodelabViewModel` qui contient les informations d'affichage : 
 ```dart
 import 'package:codelab_flutter_at_octo/activity.dart';
-import 'package:codelab_flutter_at_octo/codelab_state.dart';
+import 'package:codelab_flutter_at_octo/codelab_view_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:redux/redux.dart';
 

@@ -1,26 +1,23 @@
-import 'package:codelab_flutter_at_octo/activity.dart';
-import 'package:codelab_flutter_at_octo/activity_repository.dart';
 import 'package:codelab_flutter_at_octo/codelab_button.dart';
 import 'package:codelab_flutter_at_octo/codelab_colors.dart';
+import 'package:codelab_flutter_at_octo/codelab_view_model.dart';
+import 'package:codelab_flutter_at_octo/codelab_use_case.dart';
 import 'package:codelab_flutter_at_octo/codelabs_text_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class BasicActivityPage extends StatefulWidget {
+class BasicActivityPage extends ConsumerStatefulWidget {
   const BasicActivityPage({super.key});
 
   @override
-  State<BasicActivityPage> createState() => _BasicActivityPageState();
+  BasicActivityPageState createState() => BasicActivityPageState();
 }
 
-class _BasicActivityPageState extends State<BasicActivityPage> {
+class BasicActivityPageState extends ConsumerState<BasicActivityPage> {
   bool _isFilterExpanded = true;
-  bool _loading = false;
-  bool _error = false;
   RangeValues _accessibilityRangeValue = const RangeValues(0, 100);
   RangeValues _priceRangeValue = const RangeValues(0, 100);
   double _participants = 1;
-  Activity? _activity;
 
   @override
   Widget build(BuildContext context) {
@@ -58,40 +55,21 @@ class _BasicActivityPageState extends State<BasicActivityPage> {
                 participants: _participants,
             ),
           ),
-          Expanded(
-            child: _Content(
-              loading: _loading,
-              error: _error,
-              activity: _activity,
-            ),
+          const Expanded(
+            child: _Content(),
           ),
           Padding(
             padding: const EdgeInsets.all(20),
             child: CodelabButton(
-              onTap: _getActivity,
+              onTap: () {
+                ref.watch(codelabViewModelProvider.notifier).findActivity(FindActivityUseCaseArguments(_priceRangeValue, _accessibilityRangeValue, _participants.toInt()));
+              },
               label: 'Search your activity',
             ),
           ),
         ],
       ),
     );
-  }
-
-  void _getActivity() async {
-    setState(() {
-      _loading = true;
-      _isFilterExpanded = false;
-    });
-    final activity = await ActivityRepository(http.Client()).getActivity(_priceRangeValue, _accessibilityRangeValue, _participants.toInt());
-    setState(() {
-      _loading = false;
-      if (activity != null) {
-        _activity = activity;
-        _error = false;
-      } else {
-        _error = true;
-      }
-    });
   }
 }
 
@@ -179,21 +157,15 @@ class _Empty extends StatelessWidget {
   }
 }
 
-class _Content extends StatelessWidget {
-  final bool error;
-  final bool loading;
-  final Activity? activity;
-
-  const _Content({
-    required this.error,
-    required this.loading,
-    required this.activity,
-  });
+class _Content extends HookConsumerWidget {
+  const _Content();
 
   @override
-  Widget build(BuildContext context) {
-    if (loading) return _Loading();
-    if (error) return _Error();
+  Widget build(BuildContext context, ref) {
+    final vm = ref.watch(codelabViewModelProvider);
+    if (vm.status == CodelabStatus.LOADING) return _Loading();
+    if (vm.status == CodelabStatus.ERROR) return _Error();
+    final activity = vm.activity;
     if (activity == null) return _Empty();
     return Center(
       child: Padding(
@@ -211,13 +183,13 @@ class _Content extends StatelessWidget {
               children: [
                 Center(
                     child: Text(
-                  activity!.label,
+                  activity.label,
                   style: CodelabTextStyles.text24_bold_black,
                 )),
-                _ContentRow('Type', activity!.type),
-                _ContentRow('Participants', activity!.participants.toString()),
-                _ContentRow('Accessibility', getAccessibilityLabel(activity!.accessibility)),
-                _ContentRow('Price', _getPriceLabel(activity!.price)),
+                _ContentRow('Type', activity.type),
+                _ContentRow('Participants', activity.participants.toString()),
+                _ContentRow('Accessibility', getAccessibilityLabel(activity.accessibility)),
+                _ContentRow('Price', _getPriceLabel(activity.price)),
               ],
             ),
           ),

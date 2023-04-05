@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:codelab_flutter_at_octo/activity.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart';
 
 class ActivityRepository {
@@ -34,3 +35,6 @@ class ActivityRepository {
     }
   }
 }
+
+final activityRepositoryProvider = Provider((ref) => ActivityRepository(ref.read(httpClientProvider)));
+final httpClientProvider = Provider((_) => Client());
