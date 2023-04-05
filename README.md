@@ -478,4 +478,55 @@ Expanded(
 ),
 ```
 
+## Stratégie de tests
+En dehors des tests sur le repository, nous aurons la plupart du temps deux autres types de tests automatisés sur le projet.
+ - des tests unitaires sur le View Model pour nous assurer que le bon state nous donne les bonnes données d'affichage.
+ - des tests d'intégration sur la boucle redux pour vérifier que le dispatch d'une action entraine le fait d'obtenir le bon state.
+
+### Tests sur le view model
+Pour tester notre view model nous allons avoir besoin d'un store, contenant le state que l'on souhaite tester.
+codelab_view_model_test.dart
+```dart
+// Given
+const currentState = CodelabState(status: CodelabStatus.LOADING, activity: null);
+final store = Store<CodelabState>(
+  reducer,
+  initialState: currentState,
+);
+```
+Puis on va simplement s'attendre à avoir les bonnes données
+```dart
+ // When
+final viewModel = CodelabViewModel.fromStore(store);
+
+// Then
+expect(viewModel.loading, isTrue);
+```
+
+### Tests sur la boucle redux
+De la même manière que pour le view model, nous allons avoir besoin de recréer un state.
+Cette fois ci en revanche il faudra bien lui ajouter le middleware associé à l'action que l'on veut tester, et aussi le repository mocké.
+```dart
+// Given
+    const currentState = CodelabState(status: CodelabStatus.EMPTY, activity: null);
+    final store = Store<CodelabState>(
+        reducer,
+        initialState: currentState,
+        middleware: [
+          CodelabMiddleware(_ErrorRepository()),
+        ]
+    );
+```
+Ensuite il nous faudra dispatcher notre action, puis "attendre" que notre state se retrouve dans le bon état
+```dart
+// When
+    store.dispatch(FindActivityAction(currentPriceFilter: const RangeValues(0, 1), currentAccessibilityFilter: const RangeValues(0.4, 2), currentParticipantsFilter: 4));
+    final finalState = await store.onChange.firstWhere((element) => element.status == CodelabStatus.ERROR);
+```
+Et enfin, il ne reste plus qu'à tester les paramètres que l'on veut dans notre state
+```dart
+// Then
+expect(finalState.status, CodelabStatus.ERROR);
+```
+
 Pour voir l'implémentation finale, checkout fin_redux
