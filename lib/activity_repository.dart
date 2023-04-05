@@ -4,6 +4,9 @@ import 'package:codelab_flutter_at_octo/activity.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'activity_repository.g.dart';
 
 class ActivityRepository {
   final Client httpClient;
@@ -36,5 +39,8 @@ class ActivityRepository {
   }
 }
 
-final activityRepositoryProvider = Provider((ref) => ActivityRepository(ref.read(httpClientProvider)));
-final httpClientProvider = Provider((_) => Client());
+@riverpod
+ActivityRepository activityRepository(ref) => ActivityRepository(ref.read(httpClientProvider));
+
+@riverpod
+Client httpClient(ref) => Client();
